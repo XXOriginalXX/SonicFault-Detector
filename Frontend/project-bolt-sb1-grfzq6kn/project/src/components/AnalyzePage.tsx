@@ -96,12 +96,14 @@ const PieChart: React.FC<PieChartProps> = ({ scores }) => {
         {createPieSlices()}
       </g>
       <circle cx="200" cy="200" r="80" fill="#1a1a1a" className="pie-center" />
-      <text x="200" y="195" textAnchor="middle" className="pie-center-text" fill="#fff" fontSize="18" fontWeight="600">
-        CONFIDENCE
-      </text>
-      <text x="200" y="220" textAnchor="middle" className="pie-center-value" fill="#4ecdc4" fontSize="32" fontWeight="800">
-        {total.toFixed(0)}%
-      </text>
+      <g className="center-icon">
+        <circle cx="200" cy="200" r="35" fill="none" stroke="#4ecdc4" strokeWidth="3" opacity="0.3"/>
+        <circle cx="200" cy="200" r="25" fill="none" stroke="#4ecdc4" strokeWidth="3" opacity="0.5"/>
+        <circle cx="200" cy="200" r="15" fill="#4ecdc4" opacity="0.8">
+          <animate attributeName="r" values="15;18;15" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
     </svg>
   );
 };
@@ -403,7 +405,7 @@ const AnalyzePage: React.FC<AnalyzePageProps> = ({ onBack, isBackendConnected })
                               style={{ background: getPieColor(index, Object.keys(analysisResult.result.confidence_scores).length) }}
                             ></div>
                             <span className="legend-label">{issue}</span>
-                            <span className="legend-value">{confidence.toFixed(1)}%</span>
+                            <div className="confidence-badge">{confidence.toFixed(1)}%</div>
                           </div>
                         ))}
                     </div>
@@ -639,12 +641,30 @@ const AnalyzePage: React.FC<AnalyzePageProps> = ({ onBack, isBackendConnected })
           font-size: 0.95rem;
         }
 
-        .legend-value {
+        .confidence-badge {
+          background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
           color: #4ecdc4;
           font-weight: 700;
-          font-size: 1.1rem;
+          font-size: 1rem;
+          padding: 0.4rem 0.8rem;
+          border-radius: 20px;
+          border: 1px solid #4ecdc4;
           min-width: 60px;
-          text-align: right;
+          text-align: center;
+          box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        .center-icon {
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.7;
+          }
         }
       `}</style>
     </div>
