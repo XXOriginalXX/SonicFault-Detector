@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-multipart
+librosa
+numpy
+joblib
+scikit-learn
+websockets
