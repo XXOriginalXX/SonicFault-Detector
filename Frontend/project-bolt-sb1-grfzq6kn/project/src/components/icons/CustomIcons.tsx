@@ -105,3 +105,28 @@ export const AlertCircle: React.FC = () => (
     <path d="M24 16v8M24 32h.01" stroke="currentColor" strokeWidth="2" />
   </svg>
 );
+export const Wrench: React.FC = () => (
+  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" style={{ width: '24px', height: '24px' }}>
+    <path d="M14.7 27.3l-8.4 8.4a3 3 0 000 4.2l2.1 2.1a3 3 0 004.2 0l8.4-8.4m-6.3-6.3V15a9 9 0 0115.4-6.3l-4 4 2.8 2.8 4-4a9 9 0 01-6.3 15.4h-12.3z" />
+  </svg>
+);
+
+export const Phone: React.FC = () => (
+  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" style={{ width: '24px', height: '24px' }}>
+    <path d="M14.5 4c-1 0-2 .5-2.5 1.5l-4 8c-.5 1-.5 2.5.5 3.5l6.5 6.5c3 3 7.5 7.5 10.5 10.5l6.5 6.5c1 1 2.5 1 3.5.5l8-4c1-.5 1.5-1.5 1.5-2.5v-6.5c0-1-.5-2-1.5-2.5l-8.5-4c-1-.5-2.5 0-3.5 1l-3 3-5.5-5.5-5.5-5.5 3-3c1-1 1.5-2.5 1-3.5l-4-8.5C18.5 4.5 17.5 4 16.5 4h-2z" />
+  </svg>
+);
+
+export const MapPin: React.FC = () => (
+  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" style={{ width: '24px', height: '24px' }}>
+    <path d="M38 20c0 11-14 24-14 24S10 31 10 20a14 14 0 1128 0z" />
+    <circle cx="24" cy="20" r="4" />
+  </svg>
+);
+
+export const CheckCircle: React.FC = () => (
+  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" style={{ width: '24px', height: '24px' }}>
+    <path d="M42 24a18 18 0 11-36 0 18 18 0 0136 0z" />
+    <path d="M16 24l6 6 12-12" />
+  </svg>
+);
