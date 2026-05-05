@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-feature android:name="android.hardware.telephony" android:required="false"/>
     <application
-        android:label="sonicfault"
+        android:label="Sonic Fault"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

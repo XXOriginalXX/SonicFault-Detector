@@ -176,7 +176,7 @@ DiySolution _getDiySolution(String key) {
         'Try a bottle of fuel injector cleaner added to the tank.',
         'If misfire persists, have injectors professionally cleaned or replaced.',
       ],
-      tools: ['OBD-II scanner', 'Fuel injector cleaner', 'Multimeter'],
+      tools: ['Fuel injector cleaner', 'Multimeter'],
       estimatedTime: '30 mins (inspection) / 2–3 hrs (replacement)',
       warning: 'A faulty injector can cause unburnt fuel to wash cylinder walls — prolonged use damages the engine.',
     ),

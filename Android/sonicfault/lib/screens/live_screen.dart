@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,7 +26,7 @@ class _LiveScreenState extends State<LiveScreen>
   late AnimationController _pulseCtrl;
   Timer? _scanTimer;
   String _statusMsg = 'Tap the mic to begin';
-  String _mode = '';   // 'backend' or 'offline'
+  String _mode = '';
 
   @override
   void initState() {
@@ -71,7 +70,6 @@ class _LiveScreenState extends State<LiveScreen>
       path: tmpPath,
     );
 
-    // Every 6 seconds: stop → send to backend → restart
     _scanTimer = Timer.periodic(const Duration(seconds: 6), (_) async {
       if (!_isRecording) return;
 
@@ -79,7 +77,7 @@ class _LiveScreenState extends State<LiveScreen>
       if (path != null) {
         try {
           final bytes  = await File(path).readAsBytes();
-          if (bytes.length > 1000) {  // skip empty/tiny clips
+          if (bytes.length > 1000) {
             final result = await MlService.instance
                 .predictFromBytes(bytes, 'live_clip.wav');
             if (mounted) {
@@ -96,7 +94,6 @@ class _LiveScreenState extends State<LiveScreen>
         }
       }
 
-      // Restart next clip
       await _recorder.start(
         const RecordConfig(
           encoder: AudioEncoder.wav,
@@ -158,106 +155,121 @@ class _LiveScreenState extends State<LiveScreen>
           ),
         ],
       ),
-      body: Column(
-        children: [
-          const Spacer(),
-
-          // Mode badge
-          if (_mode.isNotEmpty)
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: _mode == 'backend'
-                    ? AppTheme.green.withValues(alpha: 0.12)
-                    : AppTheme.border,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: _mode == 'backend'
-                      ? AppTheme.green.withValues(alpha: 0.4)
-                      : AppTheme.border,
-                ),
-              ),
-              child: Text(
-                _mode == 'backend'
-                    ? '🟢  Using Python backend'
-                    : '🟡  Using offline model',
-                style: TextStyle(
-                  color: _mode == 'backend' ? AppTheme.green : AppTheme.textSec,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-
-          // Pulsing mic button
-          GestureDetector(
-            onTap: _toggleRecording,
-            child: AnimatedBuilder(
-              animation: _pulseCtrl,
-              builder: (_, child) => Transform.scale(
-                scale: _isRecording ? _pulseCtrl.value : 1.0,
-                child: child,
-              ),
-              child: Container(
-                width: 130, height: 130,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _isRecording
-                      ? AppTheme.red.withValues(alpha: 0.15)
-                      : AppTheme.accentDim,
-                  border: Border.all(
-                    color: _isRecording ? AppTheme.red : AppTheme.accent,
-                    width: 2,
+      // FIX: SingleChildScrollView added to prevent overflow and allow viewing the full ResultCard
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: Column(
+          children: [
+            // Mode badge
+            if (_mode.isNotEmpty)
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _mode == 'backend'
+                        ? AppTheme.green.withValues(alpha: 0.12)
+                        : AppTheme.border,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: _mode == 'backend'
+                          ? AppTheme.green.withValues(alpha: 0.4)
+                          : AppTheme.border,
+                    ),
                   ),
-                ),
-                child: Icon(
-                  _isRecording ? Icons.stop_rounded : Icons.mic_rounded,
-                  size: 52,
-                  color: _isRecording ? AppTheme.red : AppTheme.accent,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-          Text(_statusMsg,
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: _isRecording ? AppTheme.red : AppTheme.textSec)),
-
-          if (_error != null) ...[
-            const SizedBox(height: 12),
-            Text(_error!,
-                style: const TextStyle(color: AppTheme.red, fontSize: 13)),
-          ],
-
-          const Spacer(),
-          if (_result != null) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(children: [
-                ResultCard(result: _result!).animate().fadeIn(),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () => showDiySheet(context, _result!.labelKey),
-                    icon: const Icon(Icons.build_rounded,
-                        size: 16, color: AppTheme.accent),
-                    label: const Text('VIEW DIY SOLUTION',
-                        style: TextStyle(color: AppTheme.accent)),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppTheme.accent),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                  child: Text(
+                    _mode == 'backend'
+                        ? '🟢  Using Python backend'
+                        : '🟡  Using offline model',
+                    style: TextStyle(
+                      color: _mode == 'backend' ? AppTheme.green : AppTheme.textSec,
+                      fontSize: 12,
                     ),
                   ),
                 ),
-              ]),
+              ).animate().fadeIn(),
+
+            // Pulsing mic button
+            Center(
+              child: GestureDetector(
+                onTap: _toggleRecording,
+                child: AnimatedBuilder(
+                  animation: _pulseCtrl,
+                  builder: (_, child) => Transform.scale(
+                    scale: _isRecording ? _pulseCtrl.value : 1.0,
+                    child: child,
+                  ),
+                  child: Container(
+                    width: 140, height: 140,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _isRecording
+                          ? AppTheme.red.withValues(alpha: 0.15)
+                          : AppTheme.accentDim,
+                      border: Border.all(
+                        color: _isRecording ? AppTheme.red : AppTheme.accent,
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      _isRecording ? Icons.stop_rounded : Icons.mic_rounded,
+                      size: 56,
+                      color: _isRecording ? AppTheme.red : AppTheme.accent,
+                    ),
+                  ),
+                ),
+              ),
             ),
+
+            const SizedBox(height: 20),
+            Text(_statusMsg,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: _isRecording ? AppTheme.red : AppTheme.textSec,
+                    fontWeight: FontWeight.bold)),
+
+            if (_error != null) ...[
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Text(_error!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppTheme.red, fontSize: 13)),
+              ),
+            ],
+
+            const SizedBox(height: 40), // Spacing instead of Spacer()
+
+            if (_result != null) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(children: [
+                  ResultCard(result: _result!)
+                      .animate().fadeIn().slideY(begin: 0.1, end: 0),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => showDiySheet(context, _result!.labelKey),
+                      icon: const Icon(Icons.build_rounded,
+                          size: 16, color: AppTheme.accent),
+                      label: const Text('VIEW DIY SOLUTION',
+                          style: TextStyle(color: AppTheme.accent, fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppTheme.accent, width: 1.5),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
+              const SizedBox(height: 40), // Extra bottom padding for scroll comfort
+            ],
           ],
-          const SizedBox(height: 32),
-        ],
+        ),
       ),
     );
   }

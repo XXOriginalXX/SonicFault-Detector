@@ -68,7 +68,7 @@ async def live_audio_recording():
 if __name__ == "__main__":
     # Example 1: Upload file
     print("=== FILE UPLOAD TEST ===")
-    #upload_audio_file("test_audio.wav")
+    upload_audio_file(r"C:\Users\adith\Desktop\Projects\Audacity\Audacity\Audacity\ford fiesta\high rpm 2000 ford fiesta timing belt issue.wav")
     
     # Example 2: Live recording (requires pyaudio)
     # Uncomment to test live audio:
